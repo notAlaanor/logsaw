@@ -42,9 +42,11 @@ int main() {
     {
         logsaw::scoped_text<LOGSAW_STR("-")> text;
         logsaw::scoped_indent<1> indent;
+        std::string a = "Hello!";
+        std::string b = "Goodbye!";
         for (int i = 1; i < 5; ++i) {
-            if (i % 2) the_log.add<log_error_t>("Hello!");
-            else the_log.add<log_error_t>("Goodbye!");
+            if (i % 2) the_log.add<log_error_t>(a.c_str());
+            else the_log.add<log_error_t>(b.c_str());
         }
     }
     the_log.add<log_warning_t>("Farewell, and happy logging!");
