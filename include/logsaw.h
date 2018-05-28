@@ -42,6 +42,7 @@ SOFTWARE.
 
 namespace logsaw {
     struct field {
+        virtual ~field() = default;
         friend std::ostream& operator<<(std::ostream&, field& other);
     protected:
         friend class log;
@@ -69,7 +70,7 @@ namespace logsaw {
             scoped_field_list::instance().field_list.push_back(this);
         }
 
-        ~scoped_field() {
+        virtual ~scoped_field() {
             scoped_field_list::instance().field_list.erase(std::remove(
                 scoped_field_list::instance().field_list.begin(),
                 scoped_field_list::instance().field_list.end(), this
@@ -81,7 +82,7 @@ namespace logsaw {
         }
     };
 
-    std::ostream& operator<<(std::ostream& os, field& other) {
+    inline std::ostream& operator<<(std::ostream& os, field& other) {
         return other.out(os);
     }
 
@@ -102,6 +103,7 @@ namespace logsaw {
             static constexpr char str[sizeof...(chars)+1] = { chars..., '\0' };
             return str;
         }
+        virtual ~text() = default;
     protected:
         virtual std::ostream& out(std::ostream& os) {
             os << get();
@@ -112,6 +114,7 @@ namespace logsaw {
     template<>
     struct text<void> : public field, public runtime_field {
         text() : str("") {}
+        virtual ~text() = default;
         constexpr text(const char * string) : str(string) {}
         text(char * string) : str(string) {}
 
@@ -131,7 +134,7 @@ namespace logsaw {
     struct number : public field, public runtime_field {
         number() : n(0) {}
         number(long nmb) : n(nmb) {}
-
+        virtual ~number() = default;
     protected:
         virtual std::ostream& out(std::ostream& os) {
             os << std::to_string(n);
@@ -142,6 +145,7 @@ namespace logsaw {
 
     template<char separator_char>
     struct separator : public field {
+        virtual ~separator() = default;
     protected:
         virtual std::ostream& out(std::ostream& os) {
             os << separator_char;
@@ -150,6 +154,7 @@ namespace logsaw {
     };
 
     struct timestamp : public field {
+        virtual ~timestamp() = default;
     protected:
         virtual std::ostream& out(std::ostream& os) {
             std::time_t time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -179,6 +184,7 @@ namespace logsaw {
 
         template<int w, side s>
         struct width : public logsaw::field {
+            virtual ~width() = default;
         protected:
             virtual std::ostream& out(std::ostream& os) {
                 os << (s == left ? std::left : std::right);
@@ -190,6 +196,7 @@ namespace logsaw {
 
     template<int width>
     struct scoped_indent : public scoped_field {
+        virtual ~scoped_indent() = default;
     protected:
         virtual std::ostream& out(std::ostream& os) { 
             os << std::string(width, ' ');
@@ -213,6 +220,7 @@ namespace logsaw {
 
     template<char... chars>
     struct scoped_text<logstr<chars...>> : public scoped_field {
+        virtual ~scoped_text() = default;
     protected:
         virtual std::ostream& out(std::ostream& os) {
             constexpr static char str[sizeof...(chars) + 1] = { chars..., '\0' };
@@ -338,7 +346,7 @@ namespace logsaw {
         std::vector<std::string> log_arr;
     };
 
-    std::ostream& operator<<(std::ostream& os, log& other) {
+    inline std::ostream& operator<<(std::ostream& os, log& other) {
         return other.out(os);
     }
 }
