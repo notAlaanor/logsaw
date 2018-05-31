@@ -1,7 +1,7 @@
 # `logsaw`
 `Modern, header-only, compile-time formatted, tiny, & `*`super`*` flexible C++ logging library.`
 
-`Inspired by the` [reckless](https://github.com/mattiasflodin/reckless) `logging library`
+`Inspired by the` [`reckless`](https://github.com/mattiasflodin/reckless) `logging library`
 
 ##### `C++17 is required`
 
